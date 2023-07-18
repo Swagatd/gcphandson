@@ -1,0 +1,42 @@
+{
+ "arguments" : [
+  {
+   "name" : "my.recipe",
+   "type" : "array",
+   "value" : [
+    "parse-as-csv :body ',' true",
+    "drop :body",
+    "set-type :row_id integer",
+    "set-type :abv float",
+    "set-type :ibu float"
+   ]
+  },
+  {
+   "name" : "bq.dataset",
+   "value" :"demo_data"
+  },
+  {
+   "name" : "input.path",
+   "value" : "gs://test-datalake-22222/beers.csv"
+  },
+  {
+   "name" : "bq.table", 
+   "value" : "my_table_macros" 
+  },
+  {
+   "name" : "my.schema",
+   "type" : "schema",
+   "value" : [
+    {"name": "row_id", "type": "int", "nullable" : true},
+    {"name": "abv", "type": "float", "nullable" : true},
+    {"name": "ibu", "type": "float", "nullable" : true},
+    {"name": "id", "type": "string", "nullable" : true},
+	{"name": "name", "type": "string", "nullable" : true},
+	{"name": "style", "type": "string", "nullable" : true},
+	{"name": "brewery_id", "type": "string", "nullable" : true},
+	{"name": "ounces", "type": "string", "nullable" : true}
+	
+   ]
+  }
+ ]
+}
