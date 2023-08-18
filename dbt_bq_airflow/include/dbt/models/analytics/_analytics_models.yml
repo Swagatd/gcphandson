@@ -1,0 +1,104 @@
+version: 2
+
+models:
+  - name: dim_accounts
+    description: |
+      A [SCD2](https://www.kimballgroup.com/data-warehouse-business-intelligence-resources/kimball-techniques/dimensional-modeling-techniques/type-2/) of accounts at Monzo. Currently this model reflects the state (either open or closed) and associated user over time.
+    columns:
+      - name: surrogate_key
+        description: The unique identifier of the account and state (open or closed)
+        tests:
+          - not_null
+          - unique
+      
+      - name: natural_key
+        description: The unique identifier of the account
+        tests:
+          - not_null
+
+      - name: is_open
+        description: A boolean flag for if the account is open
+        tests:
+          - not_null
+
+      - name: valid_from
+        description: The beginning of the interval the account was seen in the given state (inclusive)
+        tests:
+          - not_null
+      
+      - name: valid_to
+        description: The end of the interval the account was seen in the given state (exclusive)
+        tests:
+          - not_null
+
+    tests:
+      - dbt_utils.mutually_exclusive_ranges:
+          lower_bound_column: valid_from
+          upper_bound_column: valid_to
+          partition_by: natural_key
+          gaps: not_allowed
+
+  - name: dim_users
+    description: |
+      A [SCD2](https://www.kimballgroup.com/data-warehouse-business-intelligence-resources/kimball-techniques/dimensional-modeling-techniques/type-2/) of users associated with account(s) at Monzo. Currently this model reflects the state (account open) and aggregates the total number of accounts in addition to the unique account types seen.
+    columns:
+      - name: surrogate_key
+        description: The unique identifier of the user and state (accounts)
+        tests:
+          - not_null
+          - unique
+      
+      - name: natural_key
+        description: The unique identifier of the user
+        tests:
+          - not_null
+      
+      - name: open_account_total
+        description: The total number of open accounts for the user is the given state
+      
+      - name: open_accounts
+        description: A string of open account IDs associated with that user in the given state
+
+      - name: open_account_types
+        description: A string of unique open account types associated with that user in the given state
+
+      - name: valid_from
+        description: The beginning of the interval the user was seen in the given state (inclusive)
+        tests:
+          - not_null
+      
+      - name: valid_to
+        description: The end of the interval the user was seen in the given state (exclusive)
+        tests:
+          - not_null
+  
+    tests:
+      - dbt_utils.mutually_exclusive_ranges:
+          lower_bound_column: valid_from
+          upper_bound_column: valid_to
+          partition_by: natural_key
+          gaps: not_allowed
+
+  - name: fct_transactions
+    description: |
+      A Fact Table of all transactions found in the Monzo append only logs.
+    columns:
+      - name: unique_key
+        description: The unique identifier of the transaction
+        tests:
+          - not_null
+          - unique
+      
+      - name: account_surrogate_key
+        description: Surrogate key used to join dim_accounts where state is provided
+        tests:
+        - relationships:
+              to: ref('dim_accounts')
+              field: surrogate_key
+      
+      - name: user_surrogate_key
+        description: Surrogate key used to join dim_users where state is provided
+        tests:
+        - relationships:
+              to: ref('dim_users')
+              field: surrogate_key

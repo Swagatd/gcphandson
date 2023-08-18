@@ -1,0 +1,50 @@
+version: 2
+
+models:
+  - name: stg_accounts_closed
+    description: |
+      Incrementally loaded data from the account_closed data source from Monzo's append only logs.
+    columns:
+      - name: recorded_at
+        description: Timestamp of the account closure
+        tests:
+          - not_null
+
+      - name: account_id
+        description: The unique identifier of the account
+        tests:
+          - not_null
+
+  - name: stg_accounts_created
+    description: |
+      Incrementally loaded data from the account_created data source from Monzo's append only logs.
+    columns:
+      - name: recorded_at
+        description: Timestamp of the account creation
+        tests:
+          - not_null
+
+      - name: account_id
+        description: The unique identifier of the account
+        tests:
+          - unique
+          - not_null
+
+      - name: user_id
+        description: Identifier of user associated with account
+        tests:
+          - not_null
+
+  - name: stg_accounts_reopened
+    description: |
+      Incrementally loaded data from the account_reopened data source from Monzo's append only logs.
+    columns:
+      - name: recorded_at
+        description: Timestamp of the account re-opening
+        tests:
+          - not_null
+
+      - name: account_id
+        description: The unique identifier of the account
+        tests:
+          - not_null

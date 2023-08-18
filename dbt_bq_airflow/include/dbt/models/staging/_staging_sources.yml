@@ -1,0 +1,14 @@
+version: 2
+
+sources:
+  - name: retail
+    description: Data imported from Monzo's append only logs.
+    schema: retail
+    freshness:
+      warn_after: { count: 24, period: hour }
+    loaded_at_field: _sdc_batched_at
+    tables:
+      - name: account_closed
+      - name: account_created
+      - name: account_reopened
+      - name: account_transactions
