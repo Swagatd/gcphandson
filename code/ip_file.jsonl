@@ -1,0 +1,3 @@
+{"name": "Alice", "items": [{"product": "book", "price": 10}, {"product": "food", "price": 5}]}
+{"name": "Bob", "items": [{"product": "pen", "price": 2}, {"product": "clothing", "price": 20}]}
+{"name": "Charlie", "items": [{"product": "computer", "price": 1000}, {"product": "electronics", "price": 50}]}
